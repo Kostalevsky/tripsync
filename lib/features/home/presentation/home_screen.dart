@@ -12,11 +12,46 @@ import 'package:tripsync/features/trips/presentation/widgets/trip_card.dart';
 import 'package:tripsync/features/trips/presentation/widgets/trip_stat_chip.dart';
 import 'package:tripsync/features/trips/state/trips_controller.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final TextEditingController _inviteCodeController =
+      TextEditingController(text: 'TS-AMSTER');
+
+  @override
+  void dispose() {
+    _inviteCodeController.dispose();
+    super.dispose();
+  }
+
+  void _handleInviteCode() {
+    final code = _inviteCodeController.text.trim();
+
+    if (code.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Введите код приглашения'),
+        ),
+      );
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Код $code принят. Открываем поездку...'),
+      ),
+    );
+
+    context.push('/trip/trip_amsterdam');
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
     final user = authState.user;
     final trips = ref.watch(tripsControllerProvider);
@@ -76,7 +111,88 @@ class HomeScreen extends ConsumerWidget {
               'Управляйте групповыми поездками, голосуйте за места, стройте план по дням и контролируйте бюджет.',
               style: AppTextStyles.bodyMedium,
             ).animate().fadeIn(delay: 100.ms),
+
             const SizedBox(height: AppSpacing.l),
+
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppSpacing.l),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppRadii.xl),
+                border: Border.all(color: AppColors.border),
+                boxShadow: const [
+                  BoxShadow(
+                    color: AppColors.shadow,
+                    blurRadius: 18,
+                    offset: Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Присоединиться по коду',
+                    style: AppTextStyles.titleLarge,
+                  ),
+                  const SizedBox(height: AppSpacing.s),
+                  Text(
+                    'Введите код приглашения, чтобы быстро открыть совместную поездку.',
+                    style: AppTextStyles.bodySmall,
+                  ),
+                  const SizedBox(height: AppSpacing.m),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _inviteCodeController,
+                          decoration: InputDecoration(
+                            hintText: 'TS-XXXXXX',
+                            filled: true,
+                            fillColor: AppColors.background,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.m,
+                              vertical: AppSpacing.m,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.circular(AppRadii.l),
+                              borderSide: const BorderSide(
+                                color: AppColors.border,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.circular(AppRadii.l),
+                              borderSide: const BorderSide(
+                                color: AppColors.border,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.circular(AppRadii.l),
+                              borderSide: const BorderSide(
+                                color: AppColors.primary,
+                                width: 1.4,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.m),
+                      FilledButton(
+                        onPressed: _handleInviteCode,
+                        child: const Text('Открыть'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ).animate().fadeIn(delay: 130.ms).slideY(begin: 0.03),
+
+            const SizedBox(height: AppSpacing.l),
+
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(AppSpacing.l),
@@ -117,7 +233,7 @@ class HomeScreen extends ConsumerWidget {
                       ),
                       TripStatChip(
                         label: 'Бюджет',
-                        value: '€${totalPlannedBudget.toStringAsFixed(0)}',
+                        value: '₽${totalPlannedBudget.toStringAsFixed(0)}',
                         icon: Icons.pie_chart_outline_rounded,
                       ),
                     ],
@@ -125,12 +241,16 @@ class HomeScreen extends ConsumerWidget {
                 ],
               ),
             ).animate().fadeIn(delay: 150.ms).slideY(begin: 0.04),
+
             const SizedBox(height: AppSpacing.xl),
+
             Text(
               'Ваши поездки',
               style: AppTextStyles.headlineMedium,
             ),
+
             const SizedBox(height: AppSpacing.m),
+
             ...List.generate(
               trips.length,
               (index) => Padding(
@@ -143,6 +263,7 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ),
             ),
+
             const SizedBox(height: 96),
           ],
         ),

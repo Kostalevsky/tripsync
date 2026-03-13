@@ -6,7 +6,8 @@ final placesControllerProvider =
   (ref) => PlacesController(),
 );
 
-class PlacesController extends StateNotifier<Map<String, List<PlaceSuggestion>>> {
+class PlacesController
+    extends StateNotifier<Map<String, List<PlaceSuggestion>>> {
   PlacesController() : super(_demoPlaces);
 
   List<PlaceSuggestion> getPlacesForTrip(String tripId) {
@@ -41,6 +42,49 @@ class PlacesController extends StateNotifier<Map<String, List<PlaceSuggestion>>>
         votedBy: updatedVoters,
       );
     }
+
+    state = {
+      ...state,
+      tripId: current,
+    };
+  }
+
+  void addPlace({
+    required String tripId,
+    required PlaceSuggestion place,
+  }) {
+    final current = [...(state[tripId] ?? const <PlaceSuggestion>[])];
+    current.insert(0, place);
+
+    state = {
+      ...state,
+      tripId: current,
+    };
+  }
+
+  void updatePlace({
+    required String tripId,
+    required PlaceSuggestion updatedPlace,
+  }) {
+    final current = [...(state[tripId] ?? const <PlaceSuggestion>[])];
+    final index = current.indexWhere((place) => place.id == updatedPlace.id);
+
+    if (index == -1) return;
+
+    current[index] = updatedPlace;
+
+    state = {
+      ...state,
+      tripId: current,
+    };
+  }
+
+  void deletePlace({
+    required String tripId,
+    required String placeId,
+  }) {
+    final current = [...(state[tripId] ?? const <PlaceSuggestion>[])];
+    current.removeWhere((place) => place.id == placeId);
 
     state = {
       ...state,

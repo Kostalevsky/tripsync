@@ -24,8 +24,69 @@ class TripDetailsScreen extends ConsumerWidget {
     return 'https://tripsync.app/invite/${trip.id}';
   }
 
+  String _buildInviteCode(Trip trip) {
+    final normalized = trip.id
+        .replaceAll('trip_', '')
+        .replaceAll(RegExp(r'[^a-zA-Z0-9]'), '')
+        .toUpperCase();
+
+    final short = normalized.length >= 6
+        ? normalized.substring(0, 6)
+        : normalized.padRight(6, 'X');
+
+    return 'TS-$short';
+  }
+
+  Future<void> _confirmDeleteTrip(
+    BuildContext context,
+    WidgetRef ref,
+    Trip trip,
+  ) async {
+    final shouldDelete = await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) {
+            return AlertDialog(
+              title: const Text('Удалить поездку?'),
+              content: Text(
+                'Поездка "${trip.title}" будет удалена из списка. Это действие нельзя отменить.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(false),
+                  child: const Text('Отмена'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(true),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.error,
+                  ),
+                  child: const Text('Удалить'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+
+    if (!shouldDelete || !context.mounted) return;
+
+    ref.read(tripsControllerProvider.notifier).deleteTrip(trip.id);
+
+    if (!context.mounted) return;
+
+    context.go('/home');
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Поездка "${trip.title}" удалена'),
+      ),
+    );
+  }
+
   void _showShareSheet(BuildContext context, Trip trip) {
     final inviteLink = _buildInviteLink(trip);
+    final inviteCode = _buildInviteCode(trip);
+
     final shareText = '''
 Присоединяйся к моей поездке в TripSync!
 
@@ -33,98 +94,281 @@ class TripDetailsScreen extends ConsumerWidget {
 Направление: ${trip.destination}
 Даты: ${trip.dateRange}
 
-Ссылка-приглашение:
-$inviteLink
+Код приглашения: $inviteCode
+Ссылка: $inviteLink
 ''';
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
       isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (context) {
         return Container(
-          padding: const EdgeInsets.all(AppSpacing.l),
           decoration: const BoxDecoration(
             color: AppColors.surface,
             borderRadius: BorderRadius.vertical(
-              top: Radius.circular(28),
+              top: Radius.circular(32),
             ),
           ),
           child: SafeArea(
             top: false,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 44,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: AppColors.border,
-                      borderRadius: BorderRadius.circular(AppRadii.round),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.l),
-                Text(
-                  'Поделиться поездкой',
-                  style: AppTextStyles.headlineLarge,
-                ),
-                const SizedBox(height: AppSpacing.s),
-                Text(
-                  'Сгенерированная demo-ссылка для приглашения друзей в поездку.',
-                  style: AppTextStyles.bodyMedium,
-                ),
-                const SizedBox(height: AppSpacing.l),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(AppSpacing.m),
-                  decoration: BoxDecoration(
-                    color: AppColors.background,
-                    borderRadius: BorderRadius.circular(AppRadii.l),
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  child: SelectableText(
-                    inviteLink,
-                    style: AppTextStyles.titleMedium,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.l),
-                Row(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.l,
+                AppSpacing.m,
+                AppSpacing.l,
+                AppSpacing.l,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () async {
-                          await Clipboard.setData(
-                            ClipboardData(text: inviteLink),
-                          );
-                          if (context.mounted) {
-                            Navigator.of(context).pop();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Ссылка скопирована'),
-                              ),
-                            );
-                          }
-                        },
-                        icon: const Icon(Icons.copy_rounded),
-                        label: const Text('Копировать'),
+                    Center(
+                      child: Container(
+                        width: 48,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: AppColors.border,
+                          borderRadius: BorderRadius.circular(AppRadii.round),
+                        ),
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.m),
-                    Expanded(
+                    const SizedBox(height: AppSpacing.l),
+                    Row(
+                      children: [
+                        Container(
+                          width: 56,
+                          height: 56,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: AppColors.background,
+                            borderRadius: BorderRadius.circular(AppRadii.l),
+                          ),
+                          child: Text(
+                            trip.coverEmoji,
+                            style: const TextStyle(fontSize: 28),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.m),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Приглашение в поездку',
+                                style: AppTextStyles.headlineLarge,
+                              ),
+                              const SizedBox(height: AppSpacing.xs),
+                              Text(
+                                trip.title,
+                                style: AppTextStyles.bodyMedium,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.l),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(AppSpacing.l),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFF5B8CFF),
+                            Color(0xFF8E7CFF),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(AppRadii.xl),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Поделитесь поездкой с друзьями',
+                            style: AppTextStyles.titleLarge.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.s),
+                          Text(
+                            'Участники смогут быстро открыть поездку по ссылке или ввести короткий код приглашения.',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: Colors.white.withValues(alpha: 0.9),
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.l),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _InviteStatCard(
+                                  label: 'Участников',
+                                  value: '${trip.members.length}',
+                                ),
+                              ),
+                              const SizedBox(width: AppSpacing.m),
+                              Expanded(
+                                child: _InviteStatCard(
+                                  label: 'Мест',
+                                  value: '${trip.votedPlacesCount}',
+                                ),
+                              ),
+                              const SizedBox(width: AppSpacing.m),
+                              Expanded(
+                                child: _InviteStatCard(
+                                  label: 'Активностей',
+                                  value: '${trip.plannedActivitiesCount}',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.l),
+                    Text(
+                      'Код приглашения',
+                      style: AppTextStyles.titleLarge,
+                    ),
+                    const SizedBox(height: AppSpacing.s),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.l,
+                        vertical: AppSpacing.l,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.background,
+                        borderRadius: BorderRadius.circular(AppRadii.xl),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              inviteCode,
+                              style: AppTextStyles.displayMedium.copyWith(
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                          ),
+                          OutlinedButton.icon(
+                            onPressed: () async {
+                              await Clipboard.setData(
+                                ClipboardData(text: inviteCode),
+                              );
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Код приглашения скопирован'),
+                                  ),
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.copy_rounded),
+                            label: const Text('Копировать'),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.l),
+                    Text(
+                      'Ссылка-приглашение',
+                      style: AppTextStyles.titleLarge,
+                    ),
+                    const SizedBox(height: AppSpacing.s),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(AppSpacing.l),
+                      decoration: BoxDecoration(
+                        color: AppColors.background,
+                        borderRadius: BorderRadius.circular(AppRadii.xl),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: SelectableText(
+                        inviteLink,
+                        style: AppTextStyles.titleMedium,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.l),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(AppSpacing.l),
+                      decoration: BoxDecoration(
+                        color: AppColors.background,
+                        borderRadius: BorderRadius.circular(AppRadii.xl),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Что увидят участники',
+                            style: AppTextStyles.titleLarge,
+                          ),
+                          const SizedBox(height: AppSpacing.m),
+                          const _InfoRow(
+                            icon: Icons.groups_rounded,
+                            text: 'Состав группы и детали поездки',
+                          ),
+                          const SizedBox(height: AppSpacing.s),
+                          const _InfoRow(
+                            icon: Icons.how_to_vote_rounded,
+                            text: 'Голосование за места и идеи маршрута',
+                          ),
+                          const SizedBox(height: AppSpacing.s),
+                          const _InfoRow(
+                            icon: Icons.timeline_rounded,
+                            text: 'Планировщик активностей по дням',
+                          ),
+                          const SizedBox(height: AppSpacing.s),
+                          const _InfoRow(
+                            icon: Icons.account_balance_wallet_rounded,
+                            text: 'Бюджет и взаиморасчёты',
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.l),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () async {
+                              await Clipboard.setData(
+                                ClipboardData(text: inviteLink),
+                              );
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Ссылка скопирована'),
+                                  ),
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.link_rounded),
+                            label: const Text('Скопировать ссылку'),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.m),
+                    SizedBox(
+                      width: double.infinity,
                       child: FilledButton.icon(
                         onPressed: () async {
                           await Share.share(shareText);
                         },
                         icon: const Icon(Icons.share_rounded),
-                        label: const Text('Поделиться'),
+                        label: const Text('Поделиться поездкой'),
                       ),
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
         );
@@ -154,6 +398,7 @@ $inviteLink
             _TopBar(
               trip: trip,
               onShare: () => _showShareSheet(context, trip),
+              onDelete: () => _confirmDeleteTrip(context, ref, trip),
             ),
             const SizedBox(height: AppSpacing.l),
             _TripHero(trip: trip),
@@ -175,10 +420,12 @@ class _TopBar extends StatelessWidget {
   const _TopBar({
     required this.trip,
     required this.onShare,
+    required this.onDelete,
   });
 
   final Trip trip;
   final VoidCallback onShare;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -212,6 +459,12 @@ class _TopBar extends StatelessWidget {
           icon: Icons.share_rounded,
           onPressed: onShare,
         ),
+        const SizedBox(width: AppSpacing.s),
+        _IconCircleButton(
+          icon: Icons.delete_outline_rounded,
+          onPressed: onDelete,
+          iconColor: AppColors.error,
+        ),
       ],
     ).animate().fadeIn().slideY(begin: -0.1);
   }
@@ -221,10 +474,12 @@ class _IconCircleButton extends StatelessWidget {
   const _IconCircleButton({
     required this.icon,
     required this.onPressed,
+    this.iconColor,
   });
 
   final IconData icon;
   final VoidCallback onPressed;
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -243,10 +498,75 @@ class _IconCircleButton extends StatelessWidget {
           ),
           child: Icon(
             icon,
-            color: AppColors.textPrimary,
+            color: iconColor ?? AppColors.textPrimary,
           ),
         ),
       ),
+    );
+  }
+}
+
+class _InviteStatCard extends StatelessWidget {
+  const _InviteStatCard({
+    required this.label,
+    required this.value,
+  });
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.s,
+        vertical: AppSpacing.m,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(AppRadii.l),
+      ),
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: AppTextStyles.titleLarge.copyWith(color: Colors.white),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: AppTextStyles.bodySmall.copyWith(
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  const _InfoRow({
+    required this.icon,
+    required this.text,
+  });
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: AppColors.primary),
+        const SizedBox(width: AppSpacing.s),
+        Expanded(
+          child: Text(
+            text,
+            style: AppTextStyles.bodyMedium,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -417,13 +737,7 @@ class _ActionGrid extends StatelessWidget {
         'Бронирования',
         'Билеты, жильё и заметки',
         Icons.confirmation_number_outlined,
-        () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Модуль бронирований можно добавить следующим шагом'),
-            ),
-          );
-        },
+        () => context.push('/trip/${trip.id}/bookings'),
       ),
     ];
 
@@ -553,7 +867,7 @@ class _OverviewSection extends StatelessWidget {
           _OverviewRow(
             label: 'Использование бюджета',
             value:
-                '€${trip.spentBudget.toStringAsFixed(0)} / €${trip.totalBudget.toStringAsFixed(0)}',
+                '₽${trip.spentBudget.toStringAsFixed(0)} / ₽${trip.totalBudget.toStringAsFixed(0)}',
           ),
           const SizedBox(height: AppSpacing.s),
           _OverviewRow(

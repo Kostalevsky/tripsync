@@ -20,6 +20,49 @@ class BudgetController extends StateNotifier<Map<String, List<Expense>>> {
     return getExpensesForTrip(tripId).fold(0, (sum, e) => sum + e.amount);
   }
 
+  void addExpense({
+    required String tripId,
+    required Expense expense,
+  }) {
+    final current = [...(state[tripId] ?? const <Expense>[])];
+    current.insert(0, expense);
+
+    state = {
+      ...state,
+      tripId: current,
+    };
+  }
+
+  void updateExpense({
+    required String tripId,
+    required Expense updatedExpense,
+  }) {
+    final current = [...(state[tripId] ?? const <Expense>[])];
+    final index = current.indexWhere((expense) => expense.id == updatedExpense.id);
+
+    if (index == -1) return;
+
+    current[index] = updatedExpense;
+
+    state = {
+      ...state,
+      tripId: current,
+    };
+  }
+
+  void deleteExpense({
+    required String tripId,
+    required String expenseId,
+  }) {
+    final current = [...(state[tripId] ?? const <Expense>[])];
+    current.removeWhere((expense) => expense.id == expenseId);
+
+    state = {
+      ...state,
+      tripId: current,
+    };
+  }
+
   List<Settlement> calculateSettlements(String tripId) {
     final trip = _ref.read(tripsControllerProvider.notifier).getById(tripId);
     final expenses = getExpensesForTrip(tripId);
@@ -37,7 +80,8 @@ class BudgetController extends StateNotifier<Map<String, List<Expense>>> {
     };
 
     for (final expense in expenses) {
-      paid[expense.paidByUserId] = (paid[expense.paidByUserId] ?? 0) + expense.amount;
+      paid[expense.paidByUserId] =
+          (paid[expense.paidByUserId] ?? 0) + expense.amount;
     }
 
     final debtors = <MapEntry<String, double>>[];

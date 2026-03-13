@@ -7,6 +7,7 @@ import 'package:tripsync/app/theme/app_colors.dart';
 import 'package:tripsync/app/theme/app_radii.dart';
 import 'package:tripsync/app/theme/app_spacing.dart';
 import 'package:tripsync/app/theme/app_text_styles.dart';
+import 'package:tripsync/core/utils/trip_name_generator.dart';
 import 'package:tripsync/core/widgets/app_scaffold.dart';
 import 'package:tripsync/core/widgets/primary_button.dart';
 import 'package:tripsync/features/auth/state/auth_controller.dart';
@@ -26,8 +27,8 @@ class _CreateTripScreenState extends ConsumerState<CreateTripScreen> {
   final _titleController = TextEditingController();
   final _destinationController = TextEditingController();
   final _dateRangeController = TextEditingController();
-  final _budgetController = TextEditingController(text: '2000');
-  final _membersController = TextEditingController(text: 'Анна, Лео, Мия');
+  final _budgetController = TextEditingController();
+  final _membersController = TextEditingController();
 
   String _selectedEmoji = '✈️';
 
@@ -41,6 +42,25 @@ class _CreateTripScreenState extends ConsumerState<CreateTripScreen> {
     _budgetController.dispose();
     _membersController.dispose();
     super.dispose();
+  }
+
+  void _generateTripName() {
+    final destination = _destinationController.text.trim();
+
+    if (destination.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Сначала укажите направление'),
+        ),
+      );
+      return;
+    }
+
+    final generated = TripNameGenerator.generate(destination);
+
+    setState(() {
+      _titleController.text = generated;
+    });
   }
 
   void _createTrip() {
@@ -84,6 +104,12 @@ class _CreateTripScreenState extends ConsumerState<CreateTripScreen> {
     );
 
     ref.read(tripsControllerProvider.notifier).addTrip(trip);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Поездка создана'),
+      ),
+    );
 
     context.go('/trip/${trip.id}');
   }
@@ -132,9 +158,14 @@ class _CreateTripScreenState extends ConsumerState<CreateTripScreen> {
                     const SizedBox(height: AppSpacing.m),
                     TextFormField(
                       controller: _titleController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Название поездки',
                         hintText: 'Например: Лиссабон с друзьями',
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.auto_awesome_rounded),
+                          tooltip: 'Сгенерировать название',
+                          onPressed: _generateTripName,
+                        ),
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
@@ -176,7 +207,7 @@ class _CreateTripScreenState extends ConsumerState<CreateTripScreen> {
                       controller: _budgetController,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
-                        labelText: 'Общий бюджет (€)',
+                        labelText: 'Общий бюджет (₽)',
                         hintText: 'Например: 2500',
                       ),
                       validator: (value) {
@@ -203,8 +234,13 @@ class _CreateTripScreenState extends ConsumerState<CreateTripScreen> {
                       controller: _membersController,
                       decoration: const InputDecoration(
                         labelText: 'Участники',
-                        hintText: 'Через запятую: Анна, Лео, Мия',
+                        hintText: 'Через запятую: Марк, София, Алекс',
                       ),
+                    ),
+                    const SizedBox(height: AppSpacing.s),
+                    Text(
+                      'Можно оставить поле пустым и пригласить участников позже по коду или ссылке.',
+                      style: AppTextStyles.bodySmall,
                     ),
                     const SizedBox(height: AppSpacing.m),
                     Text('Обложка поездки', style: AppTextStyles.titleMedium),

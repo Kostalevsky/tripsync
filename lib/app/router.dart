@@ -3,12 +3,13 @@ import 'package:go_router/go_router.dart';
 import 'package:tripsync/features/auth/presentation/login_screen.dart';
 import 'package:tripsync/features/budget/presentation/budget_screen.dart';
 import 'package:tripsync/features/home/presentation/home_screen.dart';
-import 'package:tripsync/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:tripsync/features/onboarding/presentation/widgets/onboarding_screen.dart';
 import 'package:tripsync/features/places/presentation/places_screen.dart';
 import 'package:tripsync/features/planner/presentation/planner_screen.dart';
 import 'package:tripsync/features/splash/presentation/splash_screen.dart';
 import 'package:tripsync/features/trips/presentation/create_trip_screen.dart';
 import 'package:tripsync/features/trips/presentation/trip_details_screen.dart';
+import 'package:tripsync/features/bookings/presentation/bookings_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -78,6 +79,14 @@ final appRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final tripId = state.pathParameters['tripId']!;
         return BudgetScreen(tripId: tripId);
+      },
+    ),
+    GoRoute(
+      path: '/trip/:tripId/bookings',
+      name: 'trip-bookings',
+      builder: (BuildContext context, GoRouterState state) {
+        final tripId = state.pathParameters['tripId']!;
+        return BookingsScreen(tripId: tripId);
       },
     ),
   ],

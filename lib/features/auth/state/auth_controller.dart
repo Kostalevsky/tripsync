@@ -1,64 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tripsync/features/auth/data/auth_repository.dart';
-import 'package:tripsync/features/auth/domain/app_user.dart';
-
-final fakeAuthRepositoryProvider = Provider<AuthRepository>(
-  (ref) => const AuthRepository(),
-);
 
 final authControllerProvider =
-    StateNotifierProvider<AuthController, AuthState>((ref) {
-  return AuthController(
-    ref.read(fakeAuthRepositoryProvider),
-  );
-});
-
-class AuthController extends StateNotifier<AuthState> {
-  AuthController(this._repository) : super(const AuthState());
-
-  final AuthRepository _repository;
-
-  Future<bool> login({
-    required String email,
-    required String password,
-  }) async {
-    state = state.copyWith(
-      isLoading: true,
-      errorMessage: null,
-    );
-
-    try {
-      final user = await _repository.login(
-        email: email,
-        password: password,
-      );
-
-      state = state.copyWith(
-        isLoading: false,
-        user: user,
-        errorMessage: null,
-      );
-
-      return true;
-    } catch (error) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: error.toString().replaceFirst('Exception: ', ''),
-      );
-      return false;
-    }
-  }
-
-  Future<void> logout() async {
-    state = state.copyWith(isLoading: true, errorMessage: null);
-    await _repository.logout();
-    state = const AuthState();
-  }
-
-  void clearError() {
-    state = state.copyWith(errorMessage: null);
-  }
-}
+    StateNotifierProvider<AuthController, AuthState>(
+  (ref) => AuthController(),
+);
 
 class AuthState {
   const AuthState({
@@ -67,22 +12,97 @@ class AuthState {
     this.errorMessage,
   });
 
-  final AppUser? user;
+  final AuthUser? user;
   final bool isLoading;
   final String? errorMessage;
 
   bool get isAuthenticated => user != null;
 
   AuthState copyWith({
-    AppUser? user,
+    AuthUser? user,
     bool? isLoading,
     String? errorMessage,
-    bool clearUser = false,
+    bool clearError = false,
   }) {
     return AuthState(
-      user: clearUser ? null : (user ?? this.user),
+      user: user ?? this.user,
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
+  }
+}
+
+class AuthUser {
+  const AuthUser({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.avatar,
+  });
+
+  final String id;
+  final String name;
+  final String email;
+  final String avatar;
+}
+
+class AuthController extends StateNotifier<AuthState> {
+  AuthController() : super(const AuthState());
+
+  static const _demoEmail = 'demo@tripsync.app';
+  static const _demoPassword = '123456';
+
+  Future<bool> login({
+    required String email,
+    required String password,
+  }) async {
+    state = state.copyWith(isLoading: true, clearError: true);
+
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    if (email.trim().toLowerCase() == _demoEmail && password == _demoPassword) {
+      state = AuthState(
+        user: const AuthUser(
+          id: '1',
+          name: 'Demo User',
+          email: _demoEmail,
+          avatar: '🧑🏽‍💻',
+        ),
+        isLoading: false,
+      );
+      return true;
+    }
+
+    state = state.copyWith(
+      isLoading: false,
+      errorMessage: 'Неверный email или пароль',
+    );
+    return false;
+  }
+
+  Future<bool> register({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    state = state.copyWith(isLoading: true, clearError: true);
+
+    await Future.delayed(const Duration(milliseconds: 600));
+
+    state = AuthState(
+      user: AuthUser(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        name: name.trim(),
+        email: email.trim(),
+        avatar: '🧑‍💻',
+      ),
+      isLoading: false,
+    );
+
+    return true;
+  }
+
+  Future<void> logout() async {
+    state = const AuthState();
   }
 }

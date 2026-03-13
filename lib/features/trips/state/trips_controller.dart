@@ -19,6 +19,10 @@ class TripsController extends StateNotifier<List<Trip>> {
     state = [trip, ...state];
   }
 
+  void deleteTrip(String tripId) {
+    state = state.where((trip) => trip.id != tripId).toList();
+  }
+
   Trip? getById(String id) {
     try {
       return state.firstWhere((trip) => trip.id == id);
@@ -35,10 +39,10 @@ class TripsController extends StateNotifier<List<Trip>> {
       dateRange: '12–16 апр 2026',
       coverEmoji: '🌷',
       members: const [
-        TripMember(id: '1', name: 'Джойти', avatar: '🧑🏽‍💻'),
+        TripMember(id: '1', name: 'Алексей', avatar: '🧑🏽‍💻'),
         TripMember(id: '2', name: 'Анна', avatar: '👩🏻'),
-        TripMember(id: '3', name: 'Лео', avatar: '🧔🏼'),
-        TripMember(id: '4', name: 'Мия', avatar: '👩🏾'),
+        TripMember(id: '3', name: 'Леонид', avatar: '🧔🏼'),
+        TripMember(id: '4', name: 'Ирина', avatar: '👩🏾'),
       ],
       totalBudget: 2200,
       spentBudget: 1480,
@@ -53,8 +57,8 @@ class TripsController extends StateNotifier<List<Trip>> {
       dateRange: '02–08 июн 2026',
       coverEmoji: '🌞',
       members: const [
-        TripMember(id: '1', name: 'Джойти', avatar: '🧑🏽‍💻'),
-        TripMember(id: '5', name: 'Крис', avatar: '🧑🏻'),
+        TripMember(id: '1', name: 'Алексей', avatar: '🧑🏽‍💻'),
+        TripMember(id: '5', name: 'Кристина', avatar: '🧑🏻'),
         TripMember(id: '6', name: 'София', avatar: '👱🏻‍♀️'),
       ],
       totalBudget: 1800,
@@ -70,11 +74,11 @@ class TripsController extends StateNotifier<List<Trip>> {
       dateRange: '18–25 сен 2026',
       coverEmoji: '🗼',
       members: const [
-        TripMember(id: '1', name: 'Джойти', avatar: '🧑🏽‍💻'),
-        TripMember(id: '7', name: 'Ноа', avatar: '🧑🏾'),
-        TripMember(id: '8', name: 'Эми', avatar: '👩🏻‍🦰'),
-        TripMember(id: '9', name: 'Кай', avatar: '🧑🏻‍🎤'),
-        TripMember(id: '10', name: 'Зои', avatar: '👩🏿'),
+        TripMember(id: '1', name: 'Глеб', avatar: '🧑🏽‍💻'),
+        TripMember(id: '7', name: 'Даниил', avatar: '🧑🏾'),
+        TripMember(id: '8', name: 'Таир', avatar: '👩🏻‍🦰'),
+        TripMember(id: '9', name: 'Михаил', avatar: '🧑🏻‍🎤'),
+        TripMember(id: '10', name: 'Иван', avatar: '👩🏿'),
       ],
       totalBudget: 4200,
       spentBudget: 950,

@@ -161,7 +161,7 @@ class TripCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.s),
             Text(
-              'Использовано: €${trip.spentBudget.toStringAsFixed(0)} / €${trip.totalBudget.toStringAsFixed(0)}',
+              'Использовано: ₽${trip.spentBudget.toStringAsFixed(0)} / ₽${trip.totalBudget.toStringAsFixed(0)}',
               style: AppTextStyles.bodySmall.copyWith(
                 color: Colors.white,
               ),
