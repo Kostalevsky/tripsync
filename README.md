@@ -118,4 +118,7 @@ Flutter.
 
 Команда flutter analyze выполняется без ошибок. CI не падает.
 
+## Запуск
 APK приложения можно скачать по ссылке: https://disk.360.yandex.ru/d/_v6DwTx-ho2QzA
+
+Также, можно использовать команду flutter run
