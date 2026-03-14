@@ -128,9 +128,9 @@ class PlacesScreen extends ConsumerWidget {
                             return;
                           }
 
-                          final currentUser = ref
-                              .read(authControllerProvider)
-                              .user;
+                          // // final currentUser = ref
+                          //     .read(authControllerProvider)
+                          //     .user;
 
                           final nextPlace = PlaceSuggestion(
                             id:

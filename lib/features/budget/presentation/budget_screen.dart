@@ -111,7 +111,7 @@ class BudgetScreen extends ConsumerWidget {
                         Text('Оплатил', style: AppTextStyles.titleMedium),
                         const SizedBox(height: AppSpacing.s),
                         DropdownButtonFormField<String>(
-                          value: selectedUserId,
+                          initialValue: selectedUserId,
                           items: memberNames.entries
                               .map(
                                 (entry) => DropdownMenuItem<String>(
