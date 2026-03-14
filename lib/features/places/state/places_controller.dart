@@ -3,8 +3,8 @@ import 'package:tripsync/features/places/domain/place_suggestion.dart';
 
 final placesControllerProvider =
     StateNotifierProvider<PlacesController, Map<String, List<PlaceSuggestion>>>(
-  (ref) => PlacesController(),
-);
+      (ref) => PlacesController(),
+    );
 
 class PlacesController
     extends StateNotifier<Map<String, List<PlaceSuggestion>>> {
@@ -43,23 +43,14 @@ class PlacesController
       );
     }
 
-    state = {
-      ...state,
-      tripId: current,
-    };
+    state = {...state, tripId: current};
   }
 
-  void addPlace({
-    required String tripId,
-    required PlaceSuggestion place,
-  }) {
+  void addPlace({required String tripId, required PlaceSuggestion place}) {
     final current = [...(state[tripId] ?? const <PlaceSuggestion>[])];
     current.insert(0, place);
 
-    state = {
-      ...state,
-      tripId: current,
-    };
+    state = {...state, tripId: current};
   }
 
   void updatePlace({
@@ -73,23 +64,14 @@ class PlacesController
 
     current[index] = updatedPlace;
 
-    state = {
-      ...state,
-      tripId: current,
-    };
+    state = {...state, tripId: current};
   }
 
-  void deletePlace({
-    required String tripId,
-    required String placeId,
-  }) {
+  void deletePlace({required String tripId, required String placeId}) {
     final current = [...(state[tripId] ?? const <PlaceSuggestion>[])];
     current.removeWhere((place) => place.id == placeId);
 
-    state = {
-      ...state,
-      tripId: current,
-    };
+    state = {...state, tripId: current};
   }
 
   static final Map<String, List<PlaceSuggestion>> _demoPlaces = {

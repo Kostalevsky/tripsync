@@ -11,10 +11,7 @@ import 'package:tripsync/features/bookings/state/bookings_controller.dart';
 import 'package:tripsync/features/trips/state/trips_controller.dart';
 
 class BookingsScreen extends ConsumerWidget {
-  const BookingsScreen({
-    super.key,
-    required this.tripId,
-  });
+  const BookingsScreen({super.key, required this.tripId});
 
   final String tripId;
 
@@ -27,13 +24,18 @@ class BookingsScreen extends ConsumerWidget {
     final isEditing = booking != null;
 
     final titleController = TextEditingController(text: booking?.title ?? '');
-    final detailsController =
-        TextEditingController(text: booking?.details ?? '');
-    final dateController =
-        TextEditingController(text: booking?.dateLabel ?? '');
-    final typeController = TextEditingController(text: booking?.type ?? 'Жильё');
-    final statusController =
-        TextEditingController(text: booking?.status ?? 'Черновик');
+    final detailsController = TextEditingController(
+      text: booking?.details ?? '',
+    );
+    final dateController = TextEditingController(
+      text: booking?.dateLabel ?? '',
+    );
+    final typeController = TextEditingController(
+      text: booking?.type ?? 'Жильё',
+    );
+    final statusController = TextEditingController(
+      text: booking?.status ?? 'Черновик',
+    );
     final emojiController = TextEditingController(text: booking?.emoji ?? '🏠');
 
     showModalBottomSheet(
@@ -152,9 +154,9 @@ class BookingsScreen extends ConsumerWidget {
                           }
 
                           final next = BookingItem(
-                            id: booking?.id ??
-                                DateTime.now()
-                                    .millisecondsSinceEpoch
+                            id:
+                                booking?.id ??
+                                DateTime.now().millisecondsSinceEpoch
                                     .toString(),
                             title: title,
                             type: type,
@@ -174,10 +176,7 @@ class BookingsScreen extends ConsumerWidget {
                           } else {
                             ref
                                 .read(bookingsControllerProvider.notifier)
-                                .addBooking(
-                                  tripId: tripId,
-                                  booking: next,
-                                );
+                                .addBooking(tripId: tripId, booking: next);
                           }
 
                           Navigator.of(context).pop();
@@ -195,9 +194,7 @@ class BookingsScreen extends ConsumerWidget {
                         icon: Icon(
                           isEditing ? Icons.save_rounded : Icons.add_rounded,
                         ),
-                        label: Text(
-                          isEditing ? 'Сохранить' : 'Добавить',
-                        ),
+                        label: Text(isEditing ? 'Сохранить' : 'Добавить'),
                       ),
                     ),
                   ],
@@ -216,14 +213,13 @@ class BookingsScreen extends ConsumerWidget {
     String tripId,
     BookingItem booking,
   ) async {
-    final shouldDelete = await showDialog<bool>(
+    final shouldDelete =
+        await showDialog<bool>(
           context: context,
           builder: (dialogContext) {
             return AlertDialog(
               title: const Text('Удалить бронирование?'),
-              content: Text(
-                'Бронирование "${booking.title}" будет удалено.',
-              ),
+              content: Text('Бронирование "${booking.title}" будет удалено.'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -244,18 +240,15 @@ class BookingsScreen extends ConsumerWidget {
 
     if (!shouldDelete) return;
 
-    ref.read(bookingsControllerProvider.notifier).deleteBooking(
-          tripId: tripId,
-          bookingId: booking.id,
-        );
+    ref
+        .read(bookingsControllerProvider.notifier)
+        .deleteBooking(tripId: tripId, bookingId: booking.id);
 
     if (!context.mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Бронирование удалено'),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Бронирование удалено')));
   }
 
   Color _statusColor(String status) {
@@ -272,13 +265,11 @@ class BookingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final trip = ref.read(tripsControllerProvider.notifier).getById(tripId);
-    final bookings = ref.watch(bookingsControllerProvider)[tripId] ??
-        const <BookingItem>[];
+    final bookings =
+        ref.watch(bookingsControllerProvider)[tripId] ?? const <BookingItem>[];
 
     if (trip == null) {
-      return const Scaffold(
-        body: Center(child: Text('Поездка не найдена')),
-      );
+      return const Scaffold(body: Center(child: Text('Поездка не найдена')));
     }
 
     return AppScaffold(
@@ -358,8 +349,7 @@ class BookingsScreen extends ConsumerWidget {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               color: AppColors.background,
-                              borderRadius:
-                                  BorderRadius.circular(AppRadii.l),
+                              borderRadius: BorderRadius.circular(AppRadii.l),
                             ),
                             child: Text(
                               booking.emoji,
@@ -369,8 +359,7 @@ class BookingsScreen extends ConsumerWidget {
                           const SizedBox(width: AppSpacing.m),
                           Expanded(
                             child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   booking.title,
@@ -393,15 +382,16 @@ class BookingsScreen extends ConsumerWidget {
                                     vertical: AppSpacing.xs,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: _statusColor(booking.status)
-                                        .withValues(alpha: 0.12),
-                                    borderRadius:
-                                        BorderRadius.circular(AppRadii.round),
+                                    color: _statusColor(
+                                      booking.status,
+                                    ).withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(
+                                      AppRadii.round,
+                                    ),
                                   ),
                                   child: Text(
                                     booking.status,
-                                    style:
-                                        AppTextStyles.bodySmall.copyWith(
+                                    style: AppTextStyles.bodySmall.copyWith(
                                       color: _statusColor(booking.status),
                                     ),
                                   ),
@@ -464,22 +454,11 @@ class _TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _IconCircleButton(
-          icon: Icons.arrow_back_rounded,
-          onPressed: onBack,
-        ),
+        _IconCircleButton(icon: Icons.arrow_back_rounded, onPressed: onBack),
         const SizedBox(width: AppSpacing.m),
-        Expanded(
-          child: Text(
-            title,
-            style: AppTextStyles.headlineLarge,
-          ),
-        ),
+        Expanded(child: Text(title, style: AppTextStyles.headlineLarge)),
         const SizedBox(width: AppSpacing.s),
-        _IconCircleButton(
-          icon: Icons.add_rounded,
-          onPressed: onAdd,
-        ),
+        _IconCircleButton(icon: Icons.add_rounded, onPressed: onAdd),
       ],
     );
   }
@@ -510,21 +489,14 @@ class _SmallActionButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadii.round),
           border: Border.all(color: AppColors.border),
         ),
-        child: Icon(
-          icon,
-          size: 18,
-          color: iconColor ?? AppColors.textPrimary,
-        ),
+        child: Icon(icon, size: 18, color: iconColor ?? AppColors.textPrimary),
       ),
     );
   }
 }
 
 class _IconCircleButton extends StatelessWidget {
-  const _IconCircleButton({
-    required this.icon,
-    required this.onPressed,
-  });
+  const _IconCircleButton({required this.icon, required this.onPressed});
 
   final IconData icon;
   final VoidCallback onPressed;

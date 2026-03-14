@@ -29,10 +29,7 @@ class PrimaryButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (icon != null) ...[
-              icon!,
-              const SizedBox(width: AppSpacing.s),
-            ],
+            if (icon != null) ...[icon!, const SizedBox(width: AppSpacing.s)],
             Text(label),
           ],
         ),

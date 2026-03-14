@@ -20,8 +20,9 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  final TextEditingController _inviteCodeController =
-      TextEditingController(text: 'TS-AMSTER');
+  final TextEditingController _inviteCodeController = TextEditingController(
+    text: 'TS-AMSTER',
+  );
 
   @override
   void dispose() {
@@ -33,18 +34,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final code = _inviteCodeController.text.trim();
 
     if (code.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Введите код приглашения'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Введите код приглашения')));
       return;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Код $code принят. Открываем поездку...'),
-      ),
+      SnackBar(content: Text('Код $code принят. Открываем поездку...')),
     );
 
     context.push('/trip/trip_amsterdam');
@@ -156,22 +153,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               vertical: AppSpacing.m,
                             ),
                             border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.circular(AppRadii.l),
+                              borderRadius: BorderRadius.circular(AppRadii.l),
                               borderSide: const BorderSide(
                                 color: AppColors.border,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.circular(AppRadii.l),
+                              borderRadius: BorderRadius.circular(AppRadii.l),
                               borderSide: const BorderSide(
                                 color: AppColors.border,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.circular(AppRadii.l),
+                              borderRadius: BorderRadius.circular(AppRadii.l),
                               borderSide: const BorderSide(
                                 color: AppColors.primary,
                                 width: 1.4,
@@ -244,10 +238,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
             const SizedBox(height: AppSpacing.xl),
 
-            Text(
-              'Ваши поездки',
-              style: AppTextStyles.headlineMedium,
-            ),
+            Text('Ваши поездки', style: AppTextStyles.headlineMedium),
 
             const SizedBox(height: AppSpacing.m),
 

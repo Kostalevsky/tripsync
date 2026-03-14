@@ -12,10 +12,7 @@ import 'package:tripsync/features/places/state/places_controller.dart';
 import 'package:tripsync/features/trips/state/trips_controller.dart';
 
 class PlacesScreen extends ConsumerWidget {
-  const PlacesScreen({
-    super.key,
-    required this.tripId,
-  });
+  const PlacesScreen({super.key, required this.tripId});
 
   final String tripId;
 
@@ -28,10 +25,12 @@ class PlacesScreen extends ConsumerWidget {
     final isEditing = place != null;
 
     final titleController = TextEditingController(text: place?.title ?? '');
-    final categoryController =
-        TextEditingController(text: place?.category ?? '');
-    final descriptionController =
-        TextEditingController(text: place?.description ?? '');
+    final categoryController = TextEditingController(
+      text: place?.category ?? '',
+    );
+    final descriptionController = TextEditingController(
+      text: place?.description ?? '',
+    );
     final emojiController = TextEditingController(text: place?.emoji ?? '📍');
 
     showModalBottomSheet(
@@ -42,9 +41,7 @@ class PlacesScreen extends ConsumerWidget {
         return Container(
           decoration: const BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(28),
-            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
           ),
           child: SafeArea(
             top: false,
@@ -97,7 +94,8 @@ class PlacesScreen extends ConsumerWidget {
                       maxLines: 3,
                       decoration: const InputDecoration(
                         labelText: 'Описание',
-                        hintText: 'Коротко опишите, почему это место стоит посетить',
+                        hintText:
+                            'Коротко опишите, почему это место стоит посетить',
                       ),
                     ),
                     const SizedBox(height: AppSpacing.m),
@@ -130,13 +128,14 @@ class PlacesScreen extends ConsumerWidget {
                             return;
                           }
 
-                          final currentUser =
-                              ref.read(authControllerProvider).user;
+                          final currentUser = ref
+                              .read(authControllerProvider)
+                              .user;
 
                           final nextPlace = PlaceSuggestion(
-                            id: place?.id ??
-                                DateTime.now()
-                                    .millisecondsSinceEpoch
+                            id:
+                                place?.id ??
+                                DateTime.now().millisecondsSinceEpoch
                                     .toString(),
                             title: title,
                             category: category,
@@ -156,10 +155,7 @@ class PlacesScreen extends ConsumerWidget {
                           } else {
                             ref
                                 .read(placesControllerProvider.notifier)
-                                .addPlace(
-                                  tripId: tripId,
-                                  place: nextPlace,
-                                );
+                                .addPlace(tripId: tripId, place: nextPlace);
                           }
 
                           Navigator.of(context).pop();
@@ -177,9 +173,7 @@ class PlacesScreen extends ConsumerWidget {
                         icon: Icon(
                           isEditing ? Icons.save_rounded : Icons.add_rounded,
                         ),
-                        label: Text(
-                          isEditing ? 'Сохранить' : 'Добавить',
-                        ),
+                        label: Text(isEditing ? 'Сохранить' : 'Добавить'),
                       ),
                     ),
                   ],
@@ -198,14 +192,13 @@ class PlacesScreen extends ConsumerWidget {
     String tripId,
     PlaceSuggestion place,
   ) async {
-    final shouldDelete = await showDialog<bool>(
+    final shouldDelete =
+        await showDialog<bool>(
           context: context,
           builder: (dialogContext) {
             return AlertDialog(
               title: const Text('Удалить место?'),
-              content: Text(
-                'Место "${place.title}" будет удалено из списка.',
-              ),
+              content: Text('Место "${place.title}" будет удалено из списка.'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -226,18 +219,15 @@ class PlacesScreen extends ConsumerWidget {
 
     if (!shouldDelete) return;
 
-    ref.read(placesControllerProvider.notifier).deletePlace(
-          tripId: tripId,
-          placeId: place.id,
-        );
+    ref
+        .read(placesControllerProvider.notifier)
+        .deletePlace(tripId: tripId, placeId: place.id);
 
     if (!context.mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Место удалено'),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Место удалено')));
   }
 
   @override
@@ -251,9 +241,7 @@ class PlacesScreen extends ConsumerWidget {
       ..sort((a, b) => b.votes.compareTo(a.votes));
 
     if (trip == null) {
-      return const Scaffold(
-        body: Center(child: Text('Поездка не найдена')),
-      );
+      return const Scaffold(body: Center(child: Text('Поездка не найдена')));
     }
 
     return AppScaffold(
@@ -306,10 +294,7 @@ class PlacesScreen extends ConsumerWidget {
                 ),
                 child: Column(
                   children: [
-                    const Text(
-                      '📍',
-                      style: TextStyle(fontSize: 40),
-                    ),
+                    const Text('📍', style: TextStyle(fontSize: 40)),
                     const SizedBox(height: AppSpacing.m),
                     Text(
                       'Пока нет предложенных мест',
@@ -331,204 +316,194 @@ class PlacesScreen extends ConsumerWidget {
                 ),
               )
             else
-              ...List.generate(
-                places.length,
-                (index) {
-                  final place = places[index];
-                  final hasVoted = user != null && place.votedBy.contains(user.id);
+              ...List.generate(places.length, (index) {
+                final place = places[index];
+                final hasVoted =
+                    user != null && place.votedBy.contains(user.id);
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.l),
-                    child: InkWell(
-                      onTap: () => _showPlaceSheet(
-                        context,
-                        ref,
-                        tripId,
-                        place: place,
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.l),
+                  child: InkWell(
+                    onTap: () =>
+                        _showPlaceSheet(context, ref, tripId, place: place),
+                    borderRadius: BorderRadius.circular(AppRadii.xl),
+                    child: Container(
+                      padding: const EdgeInsets.all(AppSpacing.l),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(AppRadii.xl),
+                        border: Border.all(color: AppColors.border),
                       ),
-                      borderRadius: BorderRadius.circular(AppRadii.xl),
-                      child: Container(
-                        padding: const EdgeInsets.all(AppSpacing.l),
-                        decoration: BoxDecoration(
-                          color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(AppRadii.xl),
-                          border: Border.all(color: AppColors.border),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  place.emoji,
-                                  style: const TextStyle(fontSize: 30),
-                                ),
-                                const SizedBox(width: AppSpacing.m),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        place.title,
-                                        style: AppTextStyles.titleLarge,
-                                      ),
-                                      const SizedBox(height: AppSpacing.xs),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: AppSpacing.m,
-                                          vertical: AppSpacing.xs,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.background,
-                                          borderRadius: BorderRadius.circular(
-                                            AppRadii.round,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          place.category,
-                                          style: AppTextStyles.bodySmall,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: AppSpacing.m),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                place.emoji,
+                                style: const TextStyle(fontSize: 30),
+                              ),
+                              const SizedBox(width: AppSpacing.m),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    Text(
+                                      place.title,
+                                      style: AppTextStyles.titleLarge,
+                                    ),
+                                    const SizedBox(height: AppSpacing.xs),
                                     Container(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: AppSpacing.m,
-                                        vertical: AppSpacing.s,
+                                        vertical: AppSpacing.xs,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: AppColors.primary
-                                            .withValues(alpha: 0.08),
+                                        color: AppColors.background,
                                         borderRadius: BorderRadius.circular(
                                           AppRadii.round,
                                         ),
                                       ),
                                       child: Text(
-                                        '${place.votes} голосов',
-                                        style: AppTextStyles.titleMedium.copyWith(
-                                          color: AppColors.primary,
-                                        ),
+                                        place.category,
+                                        style: AppTextStyles.bodySmall,
                                       ),
-                                    ),
-                                    const SizedBox(height: AppSpacing.s),
-                                    Row(
-                                      children: [
-                                        InkWell(
-                                          onTap: () => _showPlaceSheet(
-                                            context,
-                                            ref,
-                                            tripId,
-                                            place: place,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            AppRadii.round,
-                                          ),
-                                          child: Container(
-                                            padding: const EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.background,
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                AppRadii.round,
-                                              ),
-                                              border: Border.all(
-                                                color: AppColors.border,
-                                              ),
-                                            ),
-                                            child: const Icon(
-                                              Icons.edit_outlined,
-                                              color: AppColors.primary,
-                                              size: 18,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: AppSpacing.s),
-                                        InkWell(
-                                          onTap: () => _confirmDeletePlace(
-                                            context,
-                                            ref,
-                                            tripId,
-                                            place,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            AppRadii.round,
-                                          ),
-                                          child: Container(
-                                            padding: const EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.background,
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                AppRadii.round,
-                                              ),
-                                              border: Border.all(
-                                                color: AppColors.border,
-                                              ),
-                                            ),
-                                            child: const Icon(
-                                              Icons.delete_outline_rounded,
-                                              color: AppColors.error,
-                                              size: 18,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
-                            const SizedBox(height: AppSpacing.m),
-                            Text(
-                              place.description,
-                              style: AppTextStyles.bodyMedium,
-                            ),
-                            const SizedBox(height: AppSpacing.l),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: FilledButton.icon(
-                                    onPressed: user == null
-                                        ? null
-                                        : () {
-                                            ref
-                                                .read(
-                                                  placesControllerProvider
-                                                      .notifier,
-                                                )
-                                                .toggleVote(
-                                                  tripId: tripId,
-                                                  placeId: place.id,
-                                                  userId: user.id,
-                                                );
-                                          },
-                                    icon: Icon(
-                                      hasVoted
-                                          ? Icons.favorite_rounded
-                                          : Icons.favorite_border_rounded,
+                              ),
+                              const SizedBox(width: AppSpacing.m),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: AppSpacing.m,
+                                      vertical: AppSpacing.s,
                                     ),
-                                    label: Text(
-                                      hasVoted
-                                          ? 'Убрать голос'
-                                          : 'Проголосовать',
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary.withValues(
+                                        alpha: 0.08,
+                                      ),
+                                      borderRadius: BorderRadius.circular(
+                                        AppRadii.round,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      '${place.votes} голосов',
+                                      style: AppTextStyles.titleMedium.copyWith(
+                                        color: AppColors.primary,
+                                      ),
                                     ),
                                   ),
+                                  const SizedBox(height: AppSpacing.s),
+                                  Row(
+                                    children: [
+                                      InkWell(
+                                        onTap: () => _showPlaceSheet(
+                                          context,
+                                          ref,
+                                          tripId,
+                                          place: place,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          AppRadii.round,
+                                        ),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.background,
+                                            borderRadius: BorderRadius.circular(
+                                              AppRadii.round,
+                                            ),
+                                            border: Border.all(
+                                              color: AppColors.border,
+                                            ),
+                                          ),
+                                          child: const Icon(
+                                            Icons.edit_outlined,
+                                            color: AppColors.primary,
+                                            size: 18,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: AppSpacing.s),
+                                      InkWell(
+                                        onTap: () => _confirmDeletePlace(
+                                          context,
+                                          ref,
+                                          tripId,
+                                          place,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          AppRadii.round,
+                                        ),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.background,
+                                            borderRadius: BorderRadius.circular(
+                                              AppRadii.round,
+                                            ),
+                                            border: Border.all(
+                                              color: AppColors.border,
+                                            ),
+                                          ),
+                                          child: const Icon(
+                                            Icons.delete_outline_rounded,
+                                            color: AppColors.error,
+                                            size: 18,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: AppSpacing.m),
+                          Text(
+                            place.description,
+                            style: AppTextStyles.bodyMedium,
+                          ),
+                          const SizedBox(height: AppSpacing.l),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: FilledButton.icon(
+                                  onPressed: user == null
+                                      ? null
+                                      : () {
+                                          ref
+                                              .read(
+                                                placesControllerProvider
+                                                    .notifier,
+                                              )
+                                              .toggleVote(
+                                                tripId: tripId,
+                                                placeId: place.id,
+                                                userId: user.id,
+                                              );
+                                        },
+                                  icon: Icon(
+                                    hasVoted
+                                        ? Icons.favorite_rounded
+                                        : Icons.favorite_border_rounded,
+                                  ),
+                                  label: Text(
+                                    hasVoted ? 'Убрать голос' : 'Проголосовать',
+                                  ),
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              }),
             const SizedBox(height: 96),
           ],
         ),
@@ -552,32 +527,18 @@ class _TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _IconCircleButton(
-          icon: Icons.arrow_back_rounded,
-          onPressed: onBack,
-        ),
+        _IconCircleButton(icon: Icons.arrow_back_rounded, onPressed: onBack),
         const SizedBox(width: AppSpacing.m),
-        Expanded(
-          child: Text(
-            title,
-            style: AppTextStyles.headlineLarge,
-          ),
-        ),
+        Expanded(child: Text(title, style: AppTextStyles.headlineLarge)),
         const SizedBox(width: AppSpacing.s),
-        _IconCircleButton(
-          icon: Icons.add_rounded,
-          onPressed: onAdd,
-        ),
+        _IconCircleButton(icon: Icons.add_rounded, onPressed: onAdd),
       ],
     );
   }
 }
 
 class _IconCircleButton extends StatelessWidget {
-  const _IconCircleButton({
-    required this.icon,
-    required this.onPressed,
-  });
+  const _IconCircleButton({required this.icon, required this.onPressed});
 
   final IconData icon;
   final VoidCallback onPressed;

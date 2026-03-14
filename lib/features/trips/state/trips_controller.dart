@@ -3,8 +3,8 @@ import 'package:tripsync/features/trips/domain/trip.dart';
 
 final tripsControllerProvider =
     StateNotifierProvider<TripsController, List<Trip>>((ref) {
-  return TripsController();
-});
+      return TripsController();
+    });
 
 final selectedTripProvider = Provider<Trip?>((ref) {
   final trips = ref.watch(tripsControllerProvider);

@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tripsync/features/bookings/domain/booking_item.dart';
 
-final bookingsControllerProvider = StateNotifierProvider<BookingsController,
-    Map<String, List<BookingItem>>>(
-  (ref) => BookingsController(),
-);
+final bookingsControllerProvider =
+    StateNotifierProvider<BookingsController, Map<String, List<BookingItem>>>(
+      (ref) => BookingsController(),
+    );
 
 class BookingsController extends StateNotifier<Map<String, List<BookingItem>>> {
   BookingsController() : super(_demoBookings);
@@ -13,17 +13,11 @@ class BookingsController extends StateNotifier<Map<String, List<BookingItem>>> {
     return state[tripId] ?? const <BookingItem>[];
   }
 
-  void addBooking({
-    required String tripId,
-    required BookingItem booking,
-  }) {
+  void addBooking({required String tripId, required BookingItem booking}) {
     final current = [...(state[tripId] ?? const <BookingItem>[])];
     current.insert(0, booking);
 
-    state = {
-      ...state,
-      tripId: current,
-    };
+    state = {...state, tripId: current};
   }
 
   void updateBooking({
@@ -36,23 +30,14 @@ class BookingsController extends StateNotifier<Map<String, List<BookingItem>>> {
 
     current[index] = updatedBooking;
 
-    state = {
-      ...state,
-      tripId: current,
-    };
+    state = {...state, tripId: current};
   }
 
-  void deleteBooking({
-    required String tripId,
-    required String bookingId,
-  }) {
+  void deleteBooking({required String tripId, required String bookingId}) {
     final current = [...(state[tripId] ?? const <BookingItem>[])];
     current.removeWhere((b) => b.id == bookingId);
 
-    state = {
-      ...state,
-      tripId: current,
-    };
+    state = {...state, tripId: current};
   }
 
   static final Map<String, List<BookingItem>> _demoBookings = {

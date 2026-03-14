@@ -7,11 +7,7 @@ import 'package:tripsync/app/theme/app_text_styles.dart';
 import 'package:tripsync/features/trips/domain/trip.dart';
 
 class TripCard extends StatelessWidget {
-  const TripCard({
-    super.key,
-    required this.trip,
-    required this.onTap,
-  });
+  const TripCard({super.key, required this.trip, required this.onTap});
 
   final Trip trip;
   final VoidCallback onTap;
@@ -84,8 +80,11 @@ class TripCard extends StatelessWidget {
                   ),
                   child: const Row(
                     children: [
-                      Icon(Icons.arrow_forward_rounded,
-                          color: Colors.white, size: 18),
+                      Icon(
+                        Icons.arrow_forward_rounded,
+                        color: Colors.white,
+                        size: 18,
+                      ),
                       SizedBox(width: 6),
                       Text(
                         'Открыть',
@@ -102,9 +101,7 @@ class TripCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.l),
             Text(
               trip.title,
-              style: AppTextStyles.headlineMedium.copyWith(
-                color: Colors.white,
-              ),
+              style: AppTextStyles.headlineMedium.copyWith(color: Colors.white),
             ),
             const SizedBox(height: AppSpacing.s),
             Text(
@@ -123,29 +120,29 @@ class TripCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.l),
             Row(
               children: [
-                ...trip.members.take(4).map(
-                  (member) => Container(
-                    width: 36,
-                    height: 36,
-                    margin: const EdgeInsets.only(right: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.18),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white24),
+                ...trip.members
+                    .take(4)
+                    .map(
+                      (member) => Container(
+                        width: 36,
+                        height: 36,
+                        margin: const EdgeInsets.only(right: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.18),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white24),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          member.avatar,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
                     ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      member.avatar,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ),
                 const Spacer(),
                 Text(
                   '${trip.members.length} участников',
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: Colors.white,
-                  ),
+                  style: AppTextStyles.bodySmall.copyWith(color: Colors.white),
                 ),
               ],
             ),
@@ -162,9 +159,7 @@ class TripCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.s),
             Text(
               'Использовано: ₽${trip.spentBudget.toStringAsFixed(0)} / ₽${trip.totalBudget.toStringAsFixed(0)}',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: Colors.white,
-              ),
+              style: AppTextStyles.bodySmall.copyWith(color: Colors.white),
             ),
           ],
         ),

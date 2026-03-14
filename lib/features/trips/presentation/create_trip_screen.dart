@@ -32,7 +32,16 @@ class _CreateTripScreenState extends ConsumerState<CreateTripScreen> {
 
   String _selectedEmoji = '✈️';
 
-  final _emojiOptions = const ['✈️', '🏝️', '🌆', '🏔️', '🎡', '🌍', '🚄', '🏕️'];
+  final _emojiOptions = const [
+    '✈️',
+    '🏝️',
+    '🌆',
+    '🏔️',
+    '🎡',
+    '🌍',
+    '🚄',
+    '🏕️',
+  ];
 
   @override
   void dispose() {
@@ -49,9 +58,7 @@ class _CreateTripScreenState extends ConsumerState<CreateTripScreen> {
 
     if (destination.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Сначала укажите направление'),
-        ),
+        const SnackBar(content: Text('Сначала укажите направление')),
       );
       return;
     }
@@ -81,12 +88,12 @@ class _CreateTripScreenState extends ConsumerState<CreateTripScreen> {
         avatar: authUser?.avatar ?? '🧑',
       ),
       ...enteredMembers.asMap().entries.map(
-            (entry) => TripMember(
-              id: 'new_${entry.key}',
-              name: entry.value,
-              avatar: _memberAvatarForIndex(entry.key),
-            ),
-          ),
+        (entry) => TripMember(
+          id: 'new_${entry.key}',
+          name: entry.value,
+          avatar: _memberAvatarForIndex(entry.key),
+        ),
+      ),
     ];
 
     final trip = Trip(
@@ -105,17 +112,23 @@ class _CreateTripScreenState extends ConsumerState<CreateTripScreen> {
 
     ref.read(tripsControllerProvider.notifier).addTrip(trip);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Поездка создана'),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Поездка создана')));
 
     context.go('/trip/${trip.id}');
   }
 
   String _memberAvatarForIndex(int index) {
-    const avatars = ['👩🏻', '🧔🏼', '👩🏾', '🧑🏻', '👱🏻‍♀️', '🧑🏾', '👩🏻‍🦰'];
+    const avatars = [
+      '👩🏻',
+      '🧔🏼',
+      '👩🏾',
+      '🧑🏻',
+      '👱🏻‍♀️',
+      '🧑🏾',
+      '👩🏻‍🦰',
+    ];
     return avatars[index % avatars.length];
   }
 
@@ -154,7 +167,10 @@ class _CreateTripScreenState extends ConsumerState<CreateTripScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Основная информация', style: AppTextStyles.titleLarge),
+                    Text(
+                      'Основная информация',
+                      style: AppTextStyles.titleLarge,
+                    ),
                     const SizedBox(height: AppSpacing.m),
                     TextFormField(
                       controller: _titleController,
@@ -265,7 +281,9 @@ class _CreateTripScreenState extends ConsumerState<CreateTripScreen> {
                               color: isSelected
                                   ? AppColors.primary.withValues(alpha: 0.12)
                                   : AppColors.background,
-                              borderRadius: BorderRadius.circular(AppRadii.round),
+                              borderRadius: BorderRadius.circular(
+                                AppRadii.round,
+                              ),
                               border: Border.all(
                                 color: isSelected
                                     ? AppColors.primary
@@ -300,9 +318,7 @@ class _CreateTripScreenState extends ConsumerState<CreateTripScreen> {
 }
 
 class _SectionCard extends StatelessWidget {
-  const _SectionCard({
-    required this.child,
-  });
+  const _SectionCard({required this.child});
 
   final Widget child;
 
@@ -329,10 +345,7 @@ class _SectionCard extends StatelessWidget {
 }
 
 class _IconCircleButton extends StatelessWidget {
-  const _IconCircleButton({
-    required this.icon,
-    required this.onPressed,
-  });
+  const _IconCircleButton({required this.icon, required this.onPressed});
 
   final IconData icon;
   final VoidCallback onPressed;

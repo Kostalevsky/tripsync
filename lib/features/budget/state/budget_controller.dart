@@ -4,8 +4,8 @@ import 'package:tripsync/features/trips/state/trips_controller.dart';
 
 final budgetControllerProvider =
     StateNotifierProvider<BudgetController, Map<String, List<Expense>>>(
-  (ref) => BudgetController(ref),
-);
+      (ref) => BudgetController(ref),
+    );
 
 class BudgetController extends StateNotifier<Map<String, List<Expense>>> {
   BudgetController(this._ref) : super(_demoExpenses);
@@ -20,17 +20,11 @@ class BudgetController extends StateNotifier<Map<String, List<Expense>>> {
     return getExpensesForTrip(tripId).fold(0, (sum, e) => sum + e.amount);
   }
 
-  void addExpense({
-    required String tripId,
-    required Expense expense,
-  }) {
+  void addExpense({required String tripId, required Expense expense}) {
     final current = [...(state[tripId] ?? const <Expense>[])];
     current.insert(0, expense);
 
-    state = {
-      ...state,
-      tripId: current,
-    };
+    state = {...state, tripId: current};
   }
 
   void updateExpense({
@@ -38,29 +32,22 @@ class BudgetController extends StateNotifier<Map<String, List<Expense>>> {
     required Expense updatedExpense,
   }) {
     final current = [...(state[tripId] ?? const <Expense>[])];
-    final index = current.indexWhere((expense) => expense.id == updatedExpense.id);
+    final index = current.indexWhere(
+      (expense) => expense.id == updatedExpense.id,
+    );
 
     if (index == -1) return;
 
     current[index] = updatedExpense;
 
-    state = {
-      ...state,
-      tripId: current,
-    };
+    state = {...state, tripId: current};
   }
 
-  void deleteExpense({
-    required String tripId,
-    required String expenseId,
-  }) {
+  void deleteExpense({required String tripId, required String expenseId}) {
     final current = [...(state[tripId] ?? const <Expense>[])];
     current.removeWhere((expense) => expense.id == expenseId);
 
-    state = {
-      ...state,
-      tripId: current,
-    };
+    state = {...state, tripId: current};
   }
 
   List<Settlement> calculateSettlements(String tripId) {
@@ -75,9 +62,7 @@ class BudgetController extends StateNotifier<Map<String, List<Expense>>> {
     final total = expenses.fold<double>(0, (sum, e) => sum + e.amount);
     final share = total / memberIds.length;
 
-    final paid = <String, double>{
-      for (final id in memberIds) id: 0,
-    };
+    final paid = <String, double>{for (final id in memberIds) id: 0};
 
     for (final expense in expenses) {
       paid[expense.paidByUserId] =
@@ -103,7 +88,9 @@ class BudgetController extends StateNotifier<Map<String, List<Expense>>> {
     while (i < debtors.length && j < creditors.length) {
       final debtor = debtors[i];
       final creditor = creditors[j];
-      final amount = debtor.value < creditor.value ? debtor.value : creditor.value;
+      final amount = debtor.value < creditor.value
+          ? debtor.value
+          : creditor.value;
 
       results.add(
         Settlement(

@@ -11,18 +11,11 @@ import 'package:tripsync/features/planner/state/planner_controller.dart';
 import 'package:tripsync/features/trips/state/trips_controller.dart';
 
 class PlannerScreen extends ConsumerWidget {
-  const PlannerScreen({
-    super.key,
-    required this.tripId,
-  });
+  const PlannerScreen({super.key, required this.tripId});
 
   final String tripId;
 
-  void _showAddDaySheet(
-    BuildContext context,
-    WidgetRef ref,
-    String tripId,
-  ) {
+  void _showAddDaySheet(BuildContext context, WidgetRef ref, String tripId) {
     final controller = TextEditingController();
 
     showModalBottomSheet(
@@ -33,9 +26,7 @@ class PlannerScreen extends ConsumerWidget {
         return Container(
           decoration: const BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(28),
-            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
           ),
           child: SafeArea(
             top: false,
@@ -62,10 +53,7 @@ class PlannerScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.l),
-                    Text(
-                      'Добавить день',
-                      style: AppTextStyles.headlineLarge,
-                    ),
+                    Text('Добавить день', style: AppTextStyles.headlineLarge),
                     const SizedBox(height: AppSpacing.m),
                     TextField(
                       controller: controller,
@@ -89,17 +77,14 @@ class PlannerScreen extends ConsumerWidget {
                             return;
                           }
 
-                          ref.read(plannerControllerProvider.notifier).addDay(
-                                tripId: tripId,
-                                dayTitle: title,
-                              );
+                          ref
+                              .read(plannerControllerProvider.notifier)
+                              .addDay(tripId: tripId, dayTitle: title);
 
                           Navigator.of(context).pop();
 
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('День добавлен'),
-                            ),
+                            const SnackBar(content: Text('День добавлен')),
                           );
                         },
                         icon: const Icon(Icons.add_rounded),
@@ -126,11 +111,15 @@ class PlannerScreen extends ConsumerWidget {
     final isEditing = activity != null;
 
     final titleController = TextEditingController(text: activity?.title ?? '');
-    final locationController =
-        TextEditingController(text: activity?.location ?? '');
-    final timeController =
-        TextEditingController(text: activity?.startTime ?? '');
-    final emojiController = TextEditingController(text: activity?.emoji ?? '📍');
+    final locationController = TextEditingController(
+      text: activity?.location ?? '',
+    );
+    final timeController = TextEditingController(
+      text: activity?.startTime ?? '',
+    );
+    final emojiController = TextEditingController(
+      text: activity?.emoji ?? '📍',
+    );
 
     showModalBottomSheet(
       context: context,
@@ -140,9 +129,7 @@ class PlannerScreen extends ConsumerWidget {
         return Container(
           decoration: const BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(28),
-            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
           ),
           child: SafeArea(
             top: false,
@@ -230,9 +217,9 @@ class PlannerScreen extends ConsumerWidget {
                           }
 
                           final nextActivity = PlannedActivity(
-                            id: activity?.id ??
-                                DateTime.now()
-                                    .millisecondsSinceEpoch
+                            id:
+                                activity?.id ??
+                                DateTime.now().millisecondsSinceEpoch
                                     .toString(),
                             title: title,
                             location: location,
@@ -274,9 +261,7 @@ class PlannerScreen extends ConsumerWidget {
                         icon: Icon(
                           isEditing ? Icons.save_rounded : Icons.add_rounded,
                         ),
-                        label: Text(
-                          isEditing ? 'Сохранить' : 'Добавить',
-                        ),
+                        label: Text(isEditing ? 'Сохранить' : 'Добавить'),
                       ),
                     ),
                   ],
@@ -296,7 +281,8 @@ class PlannerScreen extends ConsumerWidget {
     String dayKey,
     PlannedActivity activity,
   ) async {
-    final shouldDelete = await showDialog<bool>(
+    final shouldDelete =
+        await showDialog<bool>(
           context: context,
           builder: (dialogContext) {
             return AlertDialog(
@@ -324,7 +310,9 @@ class PlannerScreen extends ConsumerWidget {
 
     if (!shouldDelete) return;
 
-    ref.read(plannerControllerProvider.notifier).deleteActivity(
+    ref
+        .read(plannerControllerProvider.notifier)
+        .deleteActivity(
           tripId: tripId,
           dayKey: dayKey,
           activityId: activity.id,
@@ -332,11 +320,9 @@ class PlannerScreen extends ConsumerWidget {
 
     if (!context.mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Активность удалена'),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Активность удалена')));
   }
 
   Future<void> _confirmDeleteDay(
@@ -345,7 +331,8 @@ class PlannerScreen extends ConsumerWidget {
     String tripId,
     String dayKey,
   ) async {
-    final shouldDelete = await showDialog<bool>(
+    final shouldDelete =
+        await showDialog<bool>(
           context: context,
           builder: (dialogContext) {
             return AlertDialog(
@@ -373,18 +360,15 @@ class PlannerScreen extends ConsumerWidget {
 
     if (!shouldDelete) return;
 
-    ref.read(plannerControllerProvider.notifier).deleteDay(
-          tripId: tripId,
-          dayKey: dayKey,
-        );
+    ref
+        .read(plannerControllerProvider.notifier)
+        .deleteDay(tripId: tripId, dayKey: dayKey);
 
     if (!context.mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('День удалён'),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('День удалён')));
   }
 
   @override
@@ -394,11 +378,7 @@ class PlannerScreen extends ConsumerWidget {
     final days = ref.watch(plannerControllerProvider)[tripId] ?? {};
 
     if (trip == null) {
-      return const Scaffold(
-        body: Center(
-          child: Text('Поездка не найдена'),
-        ),
-      );
+      return const Scaffold(body: Center(child: Text('Поездка не найдена')));
     }
 
     return AppScaffold(
@@ -429,10 +409,7 @@ class PlannerScreen extends ConsumerWidget {
                 ),
                 child: Column(
                   children: [
-                    const Text(
-                      '🗓️',
-                      style: TextStyle(fontSize: 44),
-                    ),
+                    const Text('🗓️', style: TextStyle(fontSize: 44)),
                     const SizedBox(height: AppSpacing.m),
                     Text(
                       'Пока нет дней в планировщике',
@@ -509,8 +486,7 @@ class PlannerScreen extends ConsumerWidget {
                             padding: const EdgeInsets.all(AppSpacing.l),
                             decoration: BoxDecoration(
                               color: AppColors.background,
-                              borderRadius:
-                                  BorderRadius.circular(AppRadii.l),
+                              borderRadius: BorderRadius.circular(AppRadii.l),
                             ),
                             child: Column(
                               children: [
@@ -559,12 +535,12 @@ class PlannerScreen extends ConsumerWidget {
                                 padding: const EdgeInsets.all(AppSpacing.m),
                                 decoration: BoxDecoration(
                                   color: AppColors.background,
-                                  borderRadius:
-                                      BorderRadius.circular(AppRadii.l),
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadii.l,
+                                  ),
                                 ),
                                 child: Row(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
                                       width: 44,
@@ -572,8 +548,7 @@ class PlannerScreen extends ConsumerWidget {
                                       alignment: Alignment.center,
                                       decoration: BoxDecoration(
                                         color: AppColors.surface,
-                                        borderRadius:
-                                            BorderRadius.circular(
+                                        borderRadius: BorderRadius.circular(
                                           AppRadii.round,
                                         ),
                                         border: Border.all(
@@ -597,8 +572,7 @@ class PlannerScreen extends ConsumerWidget {
                                             activity: activity,
                                           );
                                         },
-                                        borderRadius:
-                                            BorderRadius.circular(
+                                        borderRadius: BorderRadius.circular(
                                           AppRadii.l,
                                         ),
                                         child: Column(
@@ -607,16 +581,14 @@ class PlannerScreen extends ConsumerWidget {
                                           children: [
                                             Text(
                                               activity.title,
-                                              style:
-                                                  AppTextStyles.titleMedium,
+                                              style: AppTextStyles.titleMedium,
                                             ),
                                             const SizedBox(
                                               height: AppSpacing.xs,
                                             ),
                                             Text(
                                               '${activity.startTime} • ${activity.location}',
-                                              style:
-                                                  AppTextStyles.bodySmall,
+                                              style: AppTextStyles.bodySmall,
                                             ),
                                             const SizedBox(
                                               height: AppSpacing.s,
@@ -624,8 +596,7 @@ class PlannerScreen extends ConsumerWidget {
                                             Row(
                                               children: [
                                                 _DurationButton(
-                                                  icon:
-                                                      Icons.remove_rounded,
+                                                  icon: Icons.remove_rounded,
                                                   onPressed: () {
                                                     ref
                                                         .read(
@@ -645,8 +616,8 @@ class PlannerScreen extends ConsumerWidget {
                                                 ),
                                                 Text(
                                                   '${activity.durationMinutes} мин',
-                                                  style: AppTextStyles
-                                                      .titleMedium,
+                                                  style:
+                                                      AppTextStyles.titleMedium,
                                                 ),
                                                 const SizedBox(
                                                   width: AppSpacing.s,
@@ -689,12 +660,9 @@ class PlannerScreen extends ConsumerWidget {
                                             );
                                           },
                                         ),
-                                        const SizedBox(
-                                          height: AppSpacing.s,
-                                        ),
+                                        const SizedBox(height: AppSpacing.s),
                                         _SmallActionButton(
-                                          icon:
-                                              Icons.delete_outline_rounded,
+                                          icon: Icons.delete_outline_rounded,
                                           iconColor: AppColors.error,
                                           onPressed: () {
                                             _confirmDeleteActivity(
@@ -706,9 +674,7 @@ class PlannerScreen extends ConsumerWidget {
                                             );
                                           },
                                         ),
-                                        const SizedBox(
-                                          height: AppSpacing.s,
-                                        ),
+                                        const SizedBox(height: AppSpacing.s),
                                         ReorderableDragStartListener(
                                           index: index,
                                           child: Container(
@@ -719,16 +685,15 @@ class PlannerScreen extends ConsumerWidget {
                                               color: AppColors.surface,
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                AppRadii.round,
-                                              ),
+                                                    AppRadii.round,
+                                                  ),
                                               border: Border.all(
                                                 color: AppColors.border,
                                               ),
                                             ),
                                             child: const Icon(
                                               Icons.drag_handle_rounded,
-                                              color:
-                                                  AppColors.textSecondary,
+                                              color: AppColors.textSecondary,
                                             ),
                                           ),
                                         ),
@@ -767,32 +732,18 @@ class _TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _IconCircleButton(
-          icon: Icons.arrow_back_rounded,
-          onPressed: onBack,
-        ),
+        _IconCircleButton(icon: Icons.arrow_back_rounded, onPressed: onBack),
         const SizedBox(width: AppSpacing.m),
-        Expanded(
-          child: Text(
-            title,
-            style: AppTextStyles.headlineLarge,
-          ),
-        ),
+        Expanded(child: Text(title, style: AppTextStyles.headlineLarge)),
         const SizedBox(width: AppSpacing.s),
-        _IconCircleButton(
-          icon: Icons.add_rounded,
-          onPressed: onAddDay,
-        ),
+        _IconCircleButton(icon: Icons.add_rounded, onPressed: onAddDay),
       ],
     );
   }
 }
 
 class _DurationButton extends StatelessWidget {
-  const _DurationButton({
-    required this.icon,
-    required this.onPressed,
-  });
+  const _DurationButton({required this.icon, required this.onPressed});
 
   final IconData icon;
   final VoidCallback onPressed;
@@ -810,11 +761,7 @@ class _DurationButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadii.round),
           border: Border.all(color: AppColors.border),
         ),
-        child: Icon(
-          icon,
-          size: 18,
-          color: AppColors.textPrimary,
-        ),
+        child: Icon(icon, size: 18, color: AppColors.textPrimary),
       ),
     );
   }
@@ -845,21 +792,14 @@ class _SmallActionButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadii.round),
           border: Border.all(color: AppColors.border),
         ),
-        child: Icon(
-          icon,
-          size: 18,
-          color: iconColor ?? AppColors.textPrimary,
-        ),
+        child: Icon(icon, size: 18, color: iconColor ?? AppColors.textPrimary),
       ),
     );
   }
 }
 
 class _IconCircleButton extends StatelessWidget {
-  const _IconCircleButton({
-    required this.icon,
-    required this.onPressed,
-  });
+  const _IconCircleButton({required this.icon, required this.onPressed});
 
   final IconData icon;
   final VoidCallback onPressed;
@@ -879,10 +819,7 @@ class _IconCircleButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppRadii.round),
             border: Border.all(color: AppColors.border),
           ),
-          child: Icon(
-            icon,
-            color: AppColors.textPrimary,
-          ),
+          child: Icon(icon, color: AppColors.textPrimary),
         ),
       ),
     );

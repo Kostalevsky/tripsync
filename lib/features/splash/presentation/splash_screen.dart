@@ -51,22 +51,22 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 84,
-              height: 84,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.primary, AppColors.secondary],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(28),
-              ),
-              child: const Icon(
-                Icons.travel_explore_rounded,
-                color: Colors.white,
-                size: 40,
-              ),
-            )
+                  width: 84,
+                  height: 84,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [AppColors.primary, AppColors.secondary],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(28),
+                  ),
+                  child: const Icon(
+                    Icons.travel_explore_rounded,
+                    color: Colors.white,
+                    size: 40,
+                  ),
+                )
                 .animate()
                 .scale(duration: 500.ms, curve: Curves.easeOutBack)
                 .fadeIn(),

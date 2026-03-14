@@ -11,12 +11,7 @@ class TripNameGenerator {
     'Приключение в',
   ];
 
-  static const _seasonPrefixes = [
-    'Весна в',
-    'Лето в',
-    'Осень в',
-    'Зима в',
-  ];
+  static const _seasonPrefixes = ['Весна в', 'Лето в', 'Осень в', 'Зима в'];
 
   static const _suffixes = [
     '— лучшие места',

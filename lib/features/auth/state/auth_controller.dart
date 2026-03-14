@@ -1,16 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final authControllerProvider =
-    StateNotifierProvider<AuthController, AuthState>(
+final authControllerProvider = StateNotifierProvider<AuthController, AuthState>(
   (ref) => AuthController(),
 );
 
 class AuthState {
-  const AuthState({
-    this.user,
-    this.isLoading = false,
-    this.errorMessage,
-  });
+  const AuthState({this.user, this.isLoading = false, this.errorMessage});
 
   final AuthUser? user;
   final bool isLoading;
@@ -52,10 +47,7 @@ class AuthController extends StateNotifier<AuthState> {
   static const _demoEmail = 'demo@tripsync.app';
   static const _demoPassword = '123456';
 
-  Future<bool> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<bool> login({required String email, required String password}) async {
     state = state.copyWith(isLoading: true, clearError: true);
 
     await Future.delayed(const Duration(milliseconds: 500));

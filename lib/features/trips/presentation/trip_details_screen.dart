@@ -13,10 +13,7 @@ import 'package:tripsync/features/trips/domain/trip.dart';
 import 'package:tripsync/features/trips/state/trips_controller.dart';
 
 class TripDetailsScreen extends ConsumerWidget {
-  const TripDetailsScreen({
-    super.key,
-    required this.tripId,
-  });
+  const TripDetailsScreen({super.key, required this.tripId});
 
   final String tripId;
 
@@ -42,7 +39,8 @@ class TripDetailsScreen extends ConsumerWidget {
     WidgetRef ref,
     Trip trip,
   ) async {
-    final shouldDelete = await showDialog<bool>(
+    final shouldDelete =
+        await showDialog<bool>(
           context: context,
           builder: (dialogContext) {
             return AlertDialog(
@@ -76,18 +74,17 @@ class TripDetailsScreen extends ConsumerWidget {
 
     context.go('/home');
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Поездка "${trip.title}" удалена'),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Поездка "${trip.title}" удалена')));
   }
 
   void _showShareSheet(BuildContext context, Trip trip) {
     final inviteLink = _buildInviteLink(trip);
     final inviteCode = _buildInviteCode(trip);
 
-    final shareText = '''
+    final shareText =
+        '''
 Присоединяйся к моей поездке в TripSync!
 
 Поездка: ${trip.title}
@@ -106,9 +103,7 @@ class TripDetailsScreen extends ConsumerWidget {
         return Container(
           decoration: const BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(32),
-            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
           ),
           child: SafeArea(
             top: false,
@@ -160,10 +155,7 @@ class TripDetailsScreen extends ConsumerWidget {
                                 style: AppTextStyles.headlineLarge,
                               ),
                               const SizedBox(height: AppSpacing.xs),
-                              Text(
-                                trip.title,
-                                style: AppTextStyles.bodyMedium,
-                              ),
+                              Text(trip.title, style: AppTextStyles.bodyMedium),
                             ],
                           ),
                         ),
@@ -175,10 +167,7 @@ class TripDetailsScreen extends ConsumerWidget {
                       padding: const EdgeInsets.all(AppSpacing.l),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFF5B8CFF),
-                            Color(0xFF8E7CFF),
-                          ],
+                          colors: [Color(0xFF5B8CFF), Color(0xFF8E7CFF)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -229,10 +218,7 @@ class TripDetailsScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.l),
-                    Text(
-                      'Код приглашения',
-                      style: AppTextStyles.titleLarge,
-                    ),
+                    Text('Код приглашения', style: AppTextStyles.titleLarge),
                     const SizedBox(height: AppSpacing.s),
                     Container(
                       width: double.infinity,
@@ -275,10 +261,7 @@ class TripDetailsScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.l),
-                    Text(
-                      'Ссылка-приглашение',
-                      style: AppTextStyles.titleLarge,
-                    ),
+                    Text('Ссылка-приглашение', style: AppTextStyles.titleLarge),
                     const SizedBox(height: AppSpacing.s),
                     Container(
                       width: double.infinity,
@@ -382,11 +365,7 @@ class TripDetailsScreen extends ConsumerWidget {
     final trip = controller.getById(tripId);
 
     if (trip == null) {
-      return const Scaffold(
-        body: Center(
-          child: Text('Поездка не найдена'),
-        ),
-      );
+      return const Scaffold(body: Center(child: Text('Поездка не найдена')));
     }
 
     return AppScaffold(
@@ -442,10 +421,7 @@ class _TopBar extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Поездка',
-                style: AppTextStyles.bodySmall,
-              ),
+              Text('Поездка', style: AppTextStyles.bodySmall),
               Text(
                 trip.title,
                 style: AppTextStyles.titleLarge,
@@ -455,10 +431,7 @@ class _TopBar extends StatelessWidget {
           ),
         ),
         const SizedBox(width: AppSpacing.s),
-        _IconCircleButton(
-          icon: Icons.share_rounded,
-          onPressed: onShare,
-        ),
+        _IconCircleButton(icon: Icons.share_rounded, onPressed: onShare),
         const SizedBox(width: AppSpacing.s),
         _IconCircleButton(
           icon: Icons.delete_outline_rounded,
@@ -496,10 +469,7 @@ class _IconCircleButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppRadii.round),
             border: Border.all(color: AppColors.border),
           ),
-          child: Icon(
-            icon,
-            color: iconColor ?? AppColors.textPrimary,
-          ),
+          child: Icon(icon, color: iconColor ?? AppColors.textPrimary),
         ),
       ),
     );
@@ -507,10 +477,7 @@ class _IconCircleButton extends StatelessWidget {
 }
 
 class _InviteStatCard extends StatelessWidget {
-  const _InviteStatCard({
-    required this.label,
-    required this.value,
-  });
+  const _InviteStatCard({required this.label, required this.value});
 
   final String label;
   final String value;
@@ -546,10 +513,7 @@ class _InviteStatCard extends StatelessWidget {
 }
 
 class _InfoRow extends StatelessWidget {
-  const _InfoRow({
-    required this.icon,
-    required this.text,
-  });
+  const _InfoRow({required this.icon, required this.text});
 
   final IconData icon;
   final String text;
@@ -560,12 +524,7 @@ class _InfoRow extends StatelessWidget {
       children: [
         Icon(icon, size: 18, color: AppColors.primary),
         const SizedBox(width: AppSpacing.s),
-        Expanded(
-          child: Text(
-            text,
-            style: AppTextStyles.bodyMedium,
-          ),
-        ),
+        Expanded(child: Text(text, style: AppTextStyles.bodyMedium)),
       ],
     );
   }
@@ -673,10 +632,7 @@ class _TripHero extends StatelessWidget {
 }
 
 class _HeroChip extends StatelessWidget {
-  const _HeroChip({
-    required this.icon,
-    required this.label,
-  });
+  const _HeroChip({required this.icon, required this.label});
 
   final IconData icon;
   final String label;
@@ -823,7 +779,10 @@ class _MembersSection extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(member.avatar, style: const TextStyle(fontSize: 18)),
+                        Text(
+                          member.avatar,
+                          style: const TextStyle(fontSize: 18),
+                        ),
                         const SizedBox(width: 8),
                         Text(member.name, style: AppTextStyles.bodyMedium),
                       ],
@@ -880,10 +839,7 @@ class _OverviewSection extends StatelessWidget {
             value: '${trip.plannedActivitiesCount}',
           ),
           const SizedBox(height: AppSpacing.s),
-          _OverviewRow(
-            label: 'Размер группы',
-            value: '${trip.members.length}',
-          ),
+          _OverviewRow(label: 'Размер группы', value: '${trip.members.length}'),
         ],
       ),
     ).animate(delay: 350.ms).fadeIn();
@@ -891,10 +847,7 @@ class _OverviewSection extends StatelessWidget {
 }
 
 class _OverviewRow extends StatelessWidget {
-  const _OverviewRow({
-    required this.label,
-    required this.value,
-  });
+  const _OverviewRow({required this.label, required this.value});
 
   final String label;
   final String value;

@@ -12,10 +12,7 @@ import 'package:tripsync/features/budget/state/budget_controller.dart';
 import 'package:tripsync/features/trips/state/trips_controller.dart';
 
 class BudgetScreen extends ConsumerWidget {
-  const BudgetScreen({
-    super.key,
-    required this.tripId,
-  });
+  const BudgetScreen({super.key, required this.tripId});
 
   final String tripId;
 
@@ -32,8 +29,9 @@ class BudgetScreen extends ConsumerWidget {
     final amountController = TextEditingController(
       text: expense != null ? expense.amount.toStringAsFixed(0) : '',
     );
-    final categoryController =
-        TextEditingController(text: expense?.category ?? 'Еда');
+    final categoryController = TextEditingController(
+      text: expense?.category ?? 'Еда',
+    );
 
     String selectedUserId = expense?.paidByUserId ?? memberNames.keys.first;
 
@@ -47,9 +45,7 @@ class BudgetScreen extends ConsumerWidget {
             return Container(
               decoration: const BoxDecoration(
                 color: AppColors.surface,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(28),
-                ),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
               ),
               child: SafeArea(
                 top: false,
@@ -71,14 +67,17 @@ class BudgetScreen extends ConsumerWidget {
                             height: 5,
                             decoration: BoxDecoration(
                               color: AppColors.border,
-                              borderRadius:
-                                  BorderRadius.circular(AppRadii.round),
+                              borderRadius: BorderRadius.circular(
+                                AppRadii.round,
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(height: AppSpacing.l),
                         Text(
-                          isEditing ? 'Редактировать расход' : 'Добавить расход',
+                          isEditing
+                              ? 'Редактировать расход'
+                              : 'Добавить расход',
                           style: AppTextStyles.headlineLarge,
                         ),
                         const SizedBox(height: AppSpacing.m),
@@ -96,8 +95,8 @@ class BudgetScreen extends ConsumerWidget {
                             decimal: true,
                           ),
                           decoration: const InputDecoration(
-                          labelText: 'Сумма (₽)',
-                          hintText: 'Например: 12000',
+                            labelText: 'Сумма (₽)',
+                            hintText: 'Например: 12000',
                           ),
                         ),
                         const SizedBox(height: AppSpacing.m),
@@ -109,10 +108,7 @@ class BudgetScreen extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: AppSpacing.m),
-                        Text(
-                          'Оплатил',
-                          style: AppTextStyles.titleMedium,
-                        ),
+                        Text('Оплатил', style: AppTextStyles.titleMedium),
                         const SizedBox(height: AppSpacing.s),
                         DropdownButtonFormField<String>(
                           value: selectedUserId,
@@ -139,8 +135,9 @@ class BudgetScreen extends ConsumerWidget {
                             onPressed: () {
                               final title = titleController.text.trim();
                               final category = categoryController.text.trim();
-                              final amount =
-                                  double.tryParse(amountController.text.trim());
+                              final amount = double.tryParse(
+                                amountController.text.trim(),
+                              );
 
                               if (title.isEmpty ||
                                   category.isEmpty ||
@@ -157,9 +154,9 @@ class BudgetScreen extends ConsumerWidget {
                               }
 
                               final nextExpense = Expense(
-                                id: expense?.id ??
-                                    DateTime.now()
-                                        .millisecondsSinceEpoch
+                                id:
+                                    expense?.id ??
+                                    DateTime.now().millisecondsSinceEpoch
                                         .toString(),
                                 title: title,
                                 paidByUserId: selectedUserId,
@@ -196,11 +193,11 @@ class BudgetScreen extends ConsumerWidget {
                               );
                             },
                             icon: Icon(
-                              isEditing ? Icons.save_rounded : Icons.add_rounded,
+                              isEditing
+                                  ? Icons.save_rounded
+                                  : Icons.add_rounded,
                             ),
-                            label: Text(
-                              isEditing ? 'Сохранить' : 'Добавить',
-                            ),
+                            label: Text(isEditing ? 'Сохранить' : 'Добавить'),
                           ),
                         ),
                       ],
@@ -221,7 +218,8 @@ class BudgetScreen extends ConsumerWidget {
     String tripId,
     Expense expense,
   ) async {
-    final shouldDelete = await showDialog<bool>(
+    final shouldDelete =
+        await showDialog<bool>(
           context: context,
           builder: (dialogContext) {
             return AlertDialog(
@@ -249,18 +247,15 @@ class BudgetScreen extends ConsumerWidget {
 
     if (!shouldDelete) return;
 
-    ref.read(budgetControllerProvider.notifier).deleteExpense(
-          tripId: tripId,
-          expenseId: expense.id,
-        );
+    ref
+        .read(budgetControllerProvider.notifier)
+        .deleteExpense(tripId: tripId, expenseId: expense.id);
 
     if (!context.mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Расход удалён'),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Расход удалён')));
   }
 
   @override
@@ -268,14 +263,13 @@ class BudgetScreen extends ConsumerWidget {
     final trip = ref.read(tripsControllerProvider.notifier).getById(tripId);
     final expensesState = ref.watch(budgetControllerProvider);
     final expenses = expensesState[tripId] ?? const <Expense>[];
-    final settlements =
-        ref.read(budgetControllerProvider.notifier).calculateSettlements(tripId);
+    final settlements = ref
+        .read(budgetControllerProvider.notifier)
+        .calculateSettlements(tripId);
     final total = expenses.fold<double>(0, (sum, e) => sum + e.amount);
 
     if (trip == null) {
-      return const Scaffold(
-        body: Center(child: Text('Поездка не найдена')),
-      );
+      return const Scaffold(body: Center(child: Text('Поездка не найдена')));
     }
 
     final categoryTotals = <String, double>{};
@@ -297,12 +291,7 @@ class BudgetScreen extends ConsumerWidget {
             _TopBar(
               title: 'Бюджет',
               onBack: () => context.pop(),
-              onAdd: () => _showExpenseSheet(
-                context,
-                ref,
-                tripId,
-                memberNames,
-              ),
+              onAdd: () => _showExpenseSheet(context, ref, tripId, memberNames),
             ),
             const SizedBox(height: AppSpacing.l),
             Container(
@@ -432,7 +421,8 @@ class BudgetScreen extends ConsumerWidget {
                               children: [
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         expense.title,
@@ -474,8 +464,8 @@ class BudgetScreen extends ConsumerWidget {
                                               color: AppColors.surface,
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                AppRadii.round,
-                                              ),
+                                                    AppRadii.round,
+                                                  ),
                                               border: Border.all(
                                                 color: AppColors.border,
                                               ),
@@ -504,8 +494,8 @@ class BudgetScreen extends ConsumerWidget {
                                               color: AppColors.surface,
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                AppRadii.round,
-                                              ),
+                                                    AppRadii.round,
+                                                  ),
                                               border: Border.all(
                                                 color: AppColors.border,
                                               ),
@@ -601,27 +591,18 @@ class _TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _IconCircleButton(
-          icon: Icons.arrow_back_rounded,
-          onPressed: onBack,
-        ),
+        _IconCircleButton(icon: Icons.arrow_back_rounded, onPressed: onBack),
         const SizedBox(width: AppSpacing.m),
         Expanded(child: Text(title, style: AppTextStyles.headlineLarge)),
         const SizedBox(width: AppSpacing.s),
-        _IconCircleButton(
-          icon: Icons.add_rounded,
-          onPressed: onAdd,
-        ),
+        _IconCircleButton(icon: Icons.add_rounded, onPressed: onAdd),
       ],
     );
   }
 }
 
 class _IconCircleButton extends StatelessWidget {
-  const _IconCircleButton({
-    required this.icon,
-    required this.onPressed,
-  });
+  const _IconCircleButton({required this.icon, required this.onPressed});
 
   final IconData icon;
   final VoidCallback onPressed;

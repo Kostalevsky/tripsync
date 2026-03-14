@@ -90,10 +90,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 height: 72,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFF3B82F6),
-                      Color(0xFF14B8A6),
-                    ],
+                    colors: [Color(0xFF3B82F6), Color(0xFF14B8A6)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -263,10 +260,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Тестовый аккаунт',
-                        style: AppTextStyles.titleLarge,
-                      ),
+                      Text('Тестовый аккаунт', style: AppTextStyles.titleLarge),
                       const SizedBox(height: AppSpacing.m),
                       Text(
                         'demo@tripsync.app / 123456',

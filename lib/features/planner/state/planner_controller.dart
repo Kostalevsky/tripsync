@@ -1,10 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tripsync/features/planner/domain/planned_activity.dart';
 
-final plannerControllerProvider = StateNotifierProvider<PlannerController,
-    Map<String, Map<String, List<PlannedActivity>>>>(
-  (ref) => PlannerController(),
-);
+final plannerControllerProvider =
+    StateNotifierProvider<
+      PlannerController,
+      Map<String, Map<String, List<PlannedActivity>>>
+    >((ref) => PlannerController());
 
 class PlannerController
     extends StateNotifier<Map<String, Map<String, List<PlannedActivity>>>> {
@@ -17,47 +18,32 @@ class PlannerController
   void ensureTripExists(String tripId) {
     if (state.containsKey(tripId)) return;
 
-    state = {
-      ...state,
-      tripId: <String, List<PlannedActivity>>{},
-    };
+    state = {...state, tripId: <String, List<PlannedActivity>>{}};
   }
 
-  void addDay({
-    required String tripId,
-    required String dayTitle,
-  }) {
+  void addDay({required String tripId, required String dayTitle}) {
     final trimmed = dayTitle.trim();
     if (trimmed.isEmpty) return;
 
     final currentTrip = {
-      ...(state[tripId] ?? const <String, List<PlannedActivity>>{})
+      ...(state[tripId] ?? const <String, List<PlannedActivity>>{}),
     };
 
     if (currentTrip.containsKey(trimmed)) return;
 
     currentTrip[trimmed] = <PlannedActivity>[];
 
-    state = {
-      ...state,
-      tripId: currentTrip,
-    };
+    state = {...state, tripId: currentTrip};
   }
 
-  void deleteDay({
-    required String tripId,
-    required String dayKey,
-  }) {
+  void deleteDay({required String tripId, required String dayKey}) {
     final currentTrip = {
-      ...(state[tripId] ?? const <String, List<PlannedActivity>>{})
+      ...(state[tripId] ?? const <String, List<PlannedActivity>>{}),
     };
 
     currentTrip.remove(dayKey);
 
-    state = {
-      ...state,
-      tripId: currentTrip,
-    };
+    state = {...state, tripId: currentTrip};
   }
 
   void addActivity({
@@ -66,17 +52,14 @@ class PlannerController
     required PlannedActivity activity,
   }) {
     final currentTrip = {
-      ...(state[tripId] ?? const <String, List<PlannedActivity>>{})
+      ...(state[tripId] ?? const <String, List<PlannedActivity>>{}),
     };
     final activities = [...(currentTrip[dayKey] ?? const <PlannedActivity>[])];
 
     activities.add(activity);
     currentTrip[dayKey] = activities;
 
-    state = {
-      ...state,
-      tripId: currentTrip,
-    };
+    state = {...state, tripId: currentTrip};
   }
 
   void updateActivity({
@@ -85,7 +68,7 @@ class PlannerController
     required PlannedActivity updated,
   }) {
     final currentTrip = {
-      ...(state[tripId] ?? const <String, List<PlannedActivity>>{})
+      ...(state[tripId] ?? const <String, List<PlannedActivity>>{}),
     };
     final activities = [...(currentTrip[dayKey] ?? const <PlannedActivity>[])];
 
@@ -95,10 +78,7 @@ class PlannerController
     activities[index] = updated;
     currentTrip[dayKey] = activities;
 
-    state = {
-      ...state,
-      tripId: currentTrip,
-    };
+    state = {...state, tripId: currentTrip};
   }
 
   void deleteActivity({
@@ -107,17 +87,14 @@ class PlannerController
     required String activityId,
   }) {
     final currentTrip = {
-      ...(state[tripId] ?? const <String, List<PlannedActivity>>{})
+      ...(state[tripId] ?? const <String, List<PlannedActivity>>{}),
     };
     final activities = [...(currentTrip[dayKey] ?? const <PlannedActivity>[])];
 
     activities.removeWhere((a) => a.id == activityId);
     currentTrip[dayKey] = activities;
 
-    state = {
-      ...state,
-      tripId: currentTrip,
-    };
+    state = {...state, tripId: currentTrip};
   }
 
   void reorderActivities({
@@ -127,7 +104,7 @@ class PlannerController
     required int newIndex,
   }) {
     final currentTrip = {
-      ...(state[tripId] ?? const <String, List<PlannedActivity>>{})
+      ...(state[tripId] ?? const <String, List<PlannedActivity>>{}),
     };
     final activities = [...(currentTrip[dayKey] ?? const <PlannedActivity>[])];
 
@@ -139,10 +116,7 @@ class PlannerController
     activities.insert(newIndex, item);
 
     currentTrip[dayKey] = activities;
-    state = {
-      ...state,
-      tripId: currentTrip,
-    };
+    state = {...state, tripId: currentTrip};
   }
 
   void increaseDuration({
@@ -178,7 +152,7 @@ class PlannerController
     required int delta,
   }) {
     final currentTrip = {
-      ...(state[tripId] ?? const <String, List<PlannedActivity>>{})
+      ...(state[tripId] ?? const <String, List<PlannedActivity>>{}),
     };
     final activities = [...(currentTrip[dayKey] ?? const <PlannedActivity>[])];
     final index = activities.indexWhere((a) => a.id == activityId);
@@ -191,10 +165,7 @@ class PlannerController
     activities[index] = activity.copyWith(durationMinutes: nextDuration);
     currentTrip[dayKey] = activities;
 
-    state = {
-      ...state,
-      tripId: currentTrip,
-    };
+    state = {...state, tripId: currentTrip};
   }
 
   static final Map<String, Map<String, List<PlannedActivity>>> _demoPlanner = {

@@ -141,10 +141,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 }
 
 class _PageIndicator extends StatelessWidget {
-  const _PageIndicator({
-    required this.count,
-    required this.index,
-  });
+  const _PageIndicator({required this.count, required this.index});
 
   final int count;
   final int index;
